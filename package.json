@@ -1,0 +1,17 @@
+{
+  "name": "test01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-coffeescript": "^2.6.2",
+    "@parcel/transformer-pug": "^2.6.2",
+    "parcel": "^2.6.2"
+  }
+}
