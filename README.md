@@ -1,3 +1,3 @@
-# Example
+A little test for some generative art from a challenge with a friend
 
-![Example image](example.jpeg)
+![Example image](example.png)

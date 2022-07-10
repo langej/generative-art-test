@@ -1,7 +1,7 @@
 Number::to = (end, skip) ->
     val = @valueOf()
     arr = (num for num in [val..end])
-    if skip then arr = arr.filter( (v,i) => i % skip == 0)
+    if skip and skip > 1 then arr = arr.filter( (v,i) => i % skip == 0)
     arr
 
 Array::random = () ->
@@ -14,6 +14,16 @@ rangedRandom = (limit) -> Number((Math.random() * limit) % (limit - 1)).toFixed(
 $ = (sel) -> document.querySelector sel
 
 svg = $ "svg"
+gradientStartColor = $("#start-color")
+gradientEndColor = $("#end-color")
+skipValueElement = $("#skip-value")
+lineColorElement = $("#line-color")
+skipValue = () -> skipValueElement.value
+lineColor = () -> lineColorElement.value
+
+onchange = () =>
+    svg.style.backgroundImage = "linear-gradient(#{gradientStartColor.value}, #{gradientEndColor.value})"
+
 
 xlimit = svg.clientWidth
 ylimit = svg.clientHeight
@@ -53,9 +63,9 @@ P = (x, y) -> {x, y}
 genCurves_left = () ->
     [xs, ys] = [0, xlimit/2]
     [xe, ye] = [xlimit/2, 0]
-    ys.to(ylimit).map((p) =>
+    ys.to(ylimit, skipValue()).map((p) =>
         curve(
-            pStr(xs, p), color(50,50,50), bezier(
+            pStr(xs, p), lineColor(), bezier(
                 pStr(xlimit/2, ylimit/2)
                 pStr(xlimit/2, ylimit/2)
                 pStr(xe, ye)
@@ -66,9 +76,9 @@ genCurves_left = () ->
 genCurves_left_bottom = () ->
     [xs, ys] = [0, xlimit/2]
     [xe, ye] = [xlimit/2, 0]
-    xs.to(xlimit/2).map((p) =>
+    xs.to(xlimit/2, skipValue()).map((p) =>
         curve(
-            pStr(p, ylimit), color(50,50,50), bezier(
+            pStr(p, ylimit), lineColor(), bezier(
                 pStr(xlimit/2, ylimit/2)
                 pStr(xlimit/2, ylimit/2)
                 pStr(xe, ye)
@@ -79,8 +89,8 @@ genCurves_left_bottom = () ->
 genCurves_right_bottom = () ->
     [xs, ys] = [xlimit/2, ylimit]
     [xe, ye] = [xlimit/2, 0]
-    xs.to(xlimit).map((p) =>
-        curve(pStr(p, ylimit), color(50,50,50), bezier(
+    xs.to(xlimit, skipValue()).map((p) =>
+        curve(pStr(p, ylimit), lineColor(), bezier(
             pStr(xlimit/2, ylimit/2)
             pStr(xlimit/2, ylimit/2)
             pStr(xe, ye)
@@ -90,9 +100,9 @@ genCurves_right_bottom = () ->
 genCurves_right = () ->
     [xs, ys] = [xlimit, ylimit]
     [xe, ye] = [xlimit/2, 0]
-    ys.to(ylimit/2).map((p) =>
+    ys.to(ylimit/2, skipValue()).map((p) =>
         curve(
-            pStr(xs, p), color(50,50,50), bezier(
+            pStr(xs, p), lineColor(), bezier(
                 pStr(xlimit/2, ylimit/2)
                 pStr(xlimit/2, ylimit/2)
                 pStr(xe, ye)
@@ -102,10 +112,9 @@ genCurves_right = () ->
 
 genCurves_right_top = () ->
     [xs, ys] = [xlimit/2, 0]
-    # [xe, ye] = [xlimit, 0]
-    xs.to(xlimit).map((p) =>
+    xs.to(xlimit, skipValue()).map((p) =>
         curve(
-            pStr(p, 0), color(50,50,50), bezier(
+            pStr(p, 0), lineColor(), bezier(
                 pStr(xlimit/2 - 20, ylimit/2)
                 pStr(xlimit/2 - 20, ylimit/2)
                 pStr(xlimit, ylimit - p)
@@ -115,10 +124,9 @@ genCurves_right_top = () ->
 
 genCurves_left_top = () ->
     [xs, ys] = [0, ylimit / 2]
-    # [xe, ye] = [xlimit, 0]
-    ys.to(0).map((p) =>
+    ys.to(0, skipValue()).map((p) =>
         curve(
-            pStr(0, p), color(50,50,50), bezier(
+            pStr(0, p), lineColor(), bezier(
                 pStr(xlimit/2, ylimit/2)
                 pStr(xlimit/2, ylimit/2)
                 pStr(p, 0)
@@ -141,4 +149,10 @@ render = () ->
         svg.append(c)
     )
 
+onchange()
 render()
+
+gradientStartColor.addEventListener "input", onchange
+gradientEndColor.addEventListener "input", onchange
+skipValueElement.addEventListener "input", render
+lineColorElement.addEventListener "input", render
